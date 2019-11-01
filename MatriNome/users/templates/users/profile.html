@@ -2,20 +2,33 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="content-section">
-        <div class="media">
-            <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
-            <div class="media-body">
-                <h2 class="account-heading">{{ user.username }}</h2>
-                <p class="text-secondary">{{ user.email }}</p>
-                About - {{ user.profile.about }} <br>
-                Age - {{ user.profile.age }}<br>
-                Gender - {{ user.profile.gender }}<br>
-                Religion - {{ user.profile.religion }}<br>
-                Mother Tongue - {{ user.profile.mother_tongue }}<br>
+    <div class="profile_container">
+        <div class="row">
+            <div class="col">
+
+                <div class="card hovercard">
+
+                    <div class="avatar">
+                        <img alt="" src="{{ user.profile.image.url }}">
+                    </div>
+                    <div class="info">
+                        <div class="title">
+                            {{ user.username }}
+                        </div>
+                        <div class="desc">About - {{ user.profile.about }}</div>
+                        <div class="desc">Age - {{ user.profile.age }}</div>
+                        <div class="desc">Gender - {{ user.profile.gender }}</div>
+                        <div class="desc">Religion - {{ user.profile.religion }}</div>
+                        <div class="desc">Mother Tongue - {{ user.profile.mother_tongue }}</div>
+                    </div>
+
+                    <a class="nav-item nav-link" href="{% url 'profile_contact' user.id %}">Smash</a><br>
+                    <a class="nav-item nav-link" href="{% url 'profile_contact_delete' user.id %}">Pass</a>
+                </div>
 
             </div>
-        </div>
 
+        </div>
     </div>
+
 {% endblock content %}
