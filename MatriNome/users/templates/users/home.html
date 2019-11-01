@@ -1,0 +1,63 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+
+    <form class="search_form" action="{% url 'profile_search' %}" method="get">
+        <font weight="200">I am looking for a <br>
+        <select name="gender">
+           <option value = "Male">Male</option>
+           <option value = "Female">Female</option>
+           <option value = "Others">Others</option>
+         </select>
+
+        of age between
+        <input type="number" name="age_from" value="18" min="18" max="100">
+        and
+        <input type="number" name="age_to" value="100" min="18" max="100">
+
+        of religion
+        <select name="religion">
+           <option value = "Hindu">Hindu</option>
+           <option value = "Christian">Christian</option>
+           <option value = "Muslim">Muslim</option>
+           <option value = "Others">Others</option>
+           <option value = "None">None</option>
+         </select>
+
+         of mother tongue
+         <select name="mother_tongue">
+            <option value = "Hindi">Hindi</option>
+            <option value = "English">English</option>
+            <option value = "Japanese">Japanese</option>
+            <option value = "Others">Others</option>
+          </select>
+
+          <br>
+
+          <center><input type="submit" value="Search"></center>
+          </font>
+    </form>
+
+    {% if user.is_authenticated %}
+        {% for profile in profiles %}
+            <article class="media content-section">
+                <img src="{{ profile.image.url }}" class="rounded-circle article-img">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{% url 'profile_view' profile.user.id %}">{{ profile.user.first_name }} - {{ profile.age }} - {{ profile.gender }}</a>
+                    </div>
+                    <p class="article-content">
+                        {{ profile.about }}
+                        Religion - {{ profile.religion }}
+                        Mother Tongue - {{ profile.mother_tongue }}
+                    </p>
+                    <div align="right">
+                        <a href="{% url 'profile_contact' profile.user.id %}">Smash</a><br>
+                        <a href="#">Pass</a>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    {% endif %}
+
+{% endblock content %}
