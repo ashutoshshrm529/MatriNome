@@ -42,7 +42,7 @@ def ProfileDetailView(request, *args, **kwargs):
                 u_form.save()
                 p_form.save()
                 messages.success(request, f'Your account has been updated!')
-                return redirect('profile')
+                return redirect('home')
         else:
             u_form = UserUpdateForm(instance=request.user)
             p_form = ProfileUpdateForm(instance=request.user.profile)
@@ -82,21 +82,35 @@ def contact(request, *args, **kwargs):
         user_from=request.user, user_to=User.objects.all().filter(id=kwargs.get("pk")).first())
     if created_new:
         new.save()
-    if created_rev and created_new:
-        send_mail('New Smash Request',
-                  f'Request by {request.user}',
-                  settings.EMAIL_HOST_USER,
-                  {User.objects.all().filter(id=kwargs.get("pk")).first().email})
+        if created_rev:
+            send_mail('New Smash Request',
+                      f'Request by {request.user}',
+                      settings.EMAIL_HOST_USER,
+                      {User.objects.all().filter(id=kwargs.get("pk")).first().email})
+            messages.success(request, f'Smash request sent')
 
-    if not created_rev and created_new:
-        send_mail('Smash',
-                  f'Contact of {request.user}',
-                  settings.EMAIL_HOST_USER,
-                  {User.objects.all().filter(id=kwargs.get("pk")).first().email})
+        else:
+            send_mail('Smash',
+                      f'Email of {request.user} - {request.user.email}',
+                      settings.EMAIL_HOST_USER,
+                      {User.objects.all().filter(id=kwargs.get("pk")).first().email})
 
-        send_mail('Smash',
-                  f'Contact of {User.objects.all().filter(id=kwargs.get("pk")).first()}',
-                  settings.EMAIL_HOST_USER,
-                  {request.user.email})
+            send_mail('Smash',
+                      f'Email of {User.objects.all().filter(id=kwargs.get("pk")).first()} - {User.objects.all().filter(id=kwargs.get("pk")).first().email}',
+                      settings.EMAIL_HOST_USER,
+                      {request.user.email})
+            messages.success(request, f'Emails of Contact Sent')
+    else:
+        messages.warning(request, f'Smash request already sent')
+    return render(request, "users/profile.html", {'user': User.objects.filter(id=kwargs.get('pk')).first()})
 
+
+def delete_contact(request, *args, **kwargs):
+    if ContactRequest.objects.filter(
+            user_from=request.user, user_to=User.objects.all().filter(id=kwargs.get("pk")).first()):
+        ContactRequest.objects.filter(
+            user_from=request.user, user_to=User.objects.all().filter(id=kwargs.get("pk")).first()).delete()
+        messages.success(request, f'Smash request deleted')
+    else:
+        messages.warning(request, f'No Smash request found')
     return render(request, "users/profile.html", {'user': User.objects.filter(id=kwargs.get('pk')).first()})
